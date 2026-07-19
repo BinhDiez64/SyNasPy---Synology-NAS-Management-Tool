@@ -1,0 +1,352 @@
+
+
+# Terminal
+
+cd '/Users/macuser/myApps/SyNasPy'
+activate_py
+chmod +x build_synaspy.sh
+./build_synaspy.sh
+
+
+# ==========================================
+# SyNasPy - Intel & Apple Silicon Build Script
+# ==========================================
+
+#!/bin/bash
+
+set -e
+
+echo "╔════════════════════════════════════════════╗"
+echo "║     SyNasPy Build Script           ║"
+echo "║     Für Intel & Apple Silicon Macs        ║"
+echo "╚════════════════════════════════════════════╝"
+echo ""
+
+# ==========================================
+# 1. Umgebung prüfen
+# ==========================================
+echo "[1/6] Prüfe Umgebung..."
+
+# Aktuelles Verzeichnis anzeigen
+CURRENT_DIR="$(pwd)"
+echo "  Aktuelles Verzeichnis: $CURRENT_DIR"
+
+# Prüfe ob die Python-Datei existiert
+if [ ! -f "synaspy.py" ]; then
+    echo "  ✗ synaspy.py nicht gefunden!"
+    echo "  Bitte stellen Sie sicher, dass Sie im richtigen Verzeichnis sind."
+    echo "  Aktuelles Verzeichnis: $CURRENT_DIR"
+    echo "  Enthaltene Dateien:"
+    ls -la
+    exit 1
+fi
+echo "  ✓ synaspy.py gefunden"
+
+PYTHON_VERSION=$(python3 --version 2>&1 | cut -d' ' -f2 | cut -d'.' -f1,2)
+echo "  Python Version: $PYTHON_VERSION"
+
+ARCH=$(uname -m)
+echo "  System Architektur: $ARCH"
+
+# ==========================================
+# 2. Prüfe Bilddateien
+# ==========================================
+echo "[2/6] Prüfe Bilddateien..."
+
+if [ -f "BinhDiez.png" ]; then
+    echo "  ✓ BinhDiez.png gefunden"
+else
+    echo "  ✗ BinhDiez.png nicht gefunden!"
+    echo "  Bitte stellen Sie sicher, dass die Datei im aktuellen Verzeichnis liegt."
+    exit 1
+fi
+
+if [ -f "SyNasPy.png" ]; then
+    echo "  ✓ SyNasPy.png gefunden"
+else
+    echo "  ✗ SyNasPy.png nicht gefunden!"
+    echo "  Bitte stellen Sie sicher, dass die Datei im aktuellen Verzeichnis liegt."
+    exit 1
+fi
+
+# ==========================================
+# 3. Abhängigkeiten installieren
+# ==========================================
+echo "[3/6] Installiere Abhängigkeiten..."
+
+pip3 install --upgrade pip --quiet 2>/dev/null || true
+pip3 install pyinstaller PyQt5 --quiet 2>/dev/null || {
+    echo "  Installiere ohne --quiet..."
+    pip3 install pyinstaller PyQt5
+}
+
+if python3 -c "import PyQt5" 2>/dev/null; then
+    echo "  ✓ PyQt5 installiert"
+else
+    echo "  ✗ PyQt5 Installation fehlgeschlagen!"
+    exit 1
+fi
+
+if python3 -c "import PyInstaller" 2>/dev/null; then
+    echo "  ✓ PyInstaller installiert"
+else
+    echo "  ✗ PyInstaller Installation fehlgeschlagen!"
+    exit 1
+fi
+
+# ==========================================
+# 4. ICNS erstellen
+# ==========================================
+echo "[4/6] Erstelle App-Icon..."
+
+if [ -f "SyNasPy.png" ] && command -v sips &> /dev/null && command -v iconutil &> /dev/null; then
+    mkdir -p SyNasPy.iconset
+
+    sips -z 16 16 SyNasPy.png --out SyNasPy.iconset/icon_16x16.png 2>/dev/null || true
+    sips -z 32 32 SyNasPy.png --out SyNasPy.iconset/icon_16x16@2x.png 2>/dev/null || true
+    sips -z 32 32 SyNasPy.png --out SyNasPy.iconset/icon_32x32.png 2>/dev/null || true
+    sips -z 64 64 SyNasPy.png --out SyNasPy.iconset/icon_32x32@2x.png 2>/dev/null || true
+    sips -z 128 128 SyNasPy.png --out SyNasPy.iconset/icon_128x128.png 2>/dev/null || true
+    sips -z 256 256 SyNasPy.png --out SyNasPy.iconset/icon_128x128@2x.png 2>/dev/null || true
+    sips -z 256 256 SyNasPy.png --out SyNasPy.iconset/icon_256x256.png 2>/dev/null || true
+    sips -z 512 512 SyNasPy.png --out SyNasPy.iconset/icon_256x256@2x.png 2>/dev/null || true
+    sips -z 512 512 SyNasPy.png --out SyNasPy.iconset/icon_512x512.png 2>/dev/null || true
+    sips -z 1024 1024 SyNasPy.png --out SyNasPy.iconset/icon_512x512@2x.png 2>/dev/null || true
+
+    iconutil -c icns SyNasPy.iconset 2>/dev/null || {
+        echo "  ⚠ ICNS Erstellung fehlgeschlagen"
+        rm -rf SyNasPy.iconset
+    }
+
+    rm -rf SyNasPy.iconset
+
+    if [ -f "SyNasPy.icns" ]; then
+        echo "  ✓ ICNS erstellt"
+    else
+        echo "  ⚠ ICNS konnte nicht erstellt werden"
+    fi
+else
+    echo "  ⚠ Kein Icon gefunden - build ohne Icon"
+fi
+
+# ==========================================
+# 5. Build mit .spec Datei
+# ==========================================
+echo "[5/6] Führe Build durch..."
+echo ""
+
+# Erstelle .spec Datei mit korrekter Ressourcen-Einbindung
+# Für Intel Macs wird target_arch auf 'x86_64' gesetzt
+cat > SyNasPy.spec << 'EOF'
+# -*- mode: python ; coding: utf-8 -*-
+
+import sys
+import os
+import platform
+
+block_cipher = None
+
+# EXPLIZITE Ressourcen-Einbindung mit korrekten Pfaden
+datas = [
+    ('BinhDiez.png', '.'),
+    ('SyNasPy.png', '.'),
+]
+
+# Architektur basierend auf System
+arch = 'arm64' if platform.machine() == 'arm64' else 'x86_64'
+
+a = Analysis(
+    ['synaspy.py'],
+    pathex=[],
+    binaries=[],
+    datas=datas,
+    hiddenimports=[
+        'PyQt5.sip',
+        'PyQt5.QtCore',
+        'PyQt5.QtGui',
+        'PyQt5.QtWidgets',
+        'socket',
+        'subprocess',
+        'json',
+        'threading',
+        'time',
+        'os',
+        'sys',
+        'pathlib',
+        'struct',
+        'getpass',
+        'datetime',
+    ],
+    hookspath=[],
+    hooksconfig={},
+    runtime_hooks=[],
+    excludes=[],
+    win_no_prefer_redirects=False,
+    win_private_assemblies=False,
+    cipher=block_cipher,
+    noarchive=False,
+)
+
+pyd = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
+
+exe = EXE(
+    pyd,
+    a.scripts,
+    a.binaries,
+    a.zipfiles,
+    a.datas,
+    [],
+    name='SyNasPy',
+    debug=False,
+    bootloader_ignore_signals=False,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    runtime_tmpdir=None,
+    console=False,
+    disable_windowed_traceback=False,
+    argv_emulation=False,
+    target_arch=arch,
+    codesign_identity=None,
+    entitlements_file=None,
+    icon='SyNasPy.icns' if os.path.exists('SyNasPy.icns') else None,
+)
+
+app = BUNDLE(
+    exe,
+    name='SyNasPy.app',
+    bundle_identifier='com.synaspy.app',
+    info_plist={
+        'CFBundleName': 'SyNasPy',
+        'CFBundleDisplayName': 'SyNasPy',
+        'CFBundleShortVersionString': '1.0.0',
+        'CFBundleVersion': '1.0.0',
+        'NSHighResolutionCapable': True,
+        'NSRequiresAquaSystemAppearance': False,
+        'CFBundleIconFile': 'SyNasPy.icns',
+        'CFBundleIconName': 'SyNasPy',
+    },
+)
+EOF
+
+echo "  ✓ .spec Datei erstellt"
+
+# Alte Builds entfernen
+rm -rf build/ dist/
+
+# Build mit .spec Datei
+pyinstaller --clean SyNasPy.spec 2>&1 | tee build.log
+
+# Prüfen ob Build erfolgreich war
+if [ ${PIPESTATUS[0]} -ne 0 ]; then
+    echo ""
+    echo "  ❌ Build fehlgeschlagen!"
+    echo "  Fehler in build.log:"
+    grep -i "error\|fail\|traceback" build.log | head -20
+    exit 1
+fi
+
+# ==========================================
+# 6. Ergebnis prüfen
+# ==========================================
+echo ""
+echo "════════════════════════════════════════════════"
+echo "  BUILD ERFOLGREICH!"
+echo "════════════════════════════════════════════════"
+echo ""
+
+if [ -d "dist/SyNasPy.app" ]; then
+    APP_SIZE=$(du -sh dist/SyNasPy.app 2>/dev/null | cut -f1 || echo "unbekannt")
+    echo "  📦 App: dist/SyNasPy.app"
+    echo "  📊 Größe: $APP_SIZE"
+    echo "  🏗 Architektur: $ARCH"
+    echo ""
+
+    # App signieren
+    if command -v codesign &> /dev/null; then
+        echo "  Signiere App (Ad-hoc)..."
+        codesign --force --deep --sign - dist/SyNasPy.app 2>/dev/null && echo "  ✅ Signiert" || echo "  ⚠ Signierung übersprungen"
+    fi
+
+    echo ""
+    echo "  🚀 App starten mit:"
+    echo "     open dist/SyNasPy.app"
+    echo ""
+    echo "  🔍 Debug-Ausgaben:"
+    echo "     dist/SyNasPy.app/Contents/MacOS/SyNasPy"
+    echo ""
+
+    # ==========================================
+    # 7. Frage nach Kopieren nach /Applications
+    # ==========================================
+    echo "────────────────────────────────────────────────"
+    echo "  Möchten Sie die App nach /Applications kopieren?"
+    echo "  (Benötigt Administrator-Rechte)"
+    echo "────────────────────────────────────────────────"
+
+    read -p "  App nach /Applications kopieren? (j/n) " COPY_APP
+    echo ""
+
+    if [[ "$COPY_APP" =~ ^[Jj]$ ]] && [ -d "dist/SyNasPy.app" ]; then
+        echo "  Kopiere App nach /Applications..."
+
+        # Prüfen ob App bereits existiert
+        if [ -d "/Applications/SyNasPy.app" ]; then
+            echo "  ⚠ App existiert bereits in /Applications"
+            read -p "  Überschreiben? (j/n) " OVERWRITE
+            echo ""
+            if [[ "$OVERWRITE" =~ ^[Jj]$ ]]; then
+                echo "  Lösche alte App..."
+                sudo rm -rf /Applications/SyNasPy.app
+                echo "  ✅ Alte App gelöscht"
+            else
+                echo "  ❌ Kopieren abgebrochen"
+                echo ""
+                echo "╔════════════════════════════════════════════╗"
+                echo "║  ✅ Build erfolgreich abgeschlossen!      ║"
+                echo "║  ℹ App wurde NICHT kopiert               ║"
+                echo "╚════════════════════════════════════════════╝"
+                exit 0
+            fi
+        fi
+
+        # Kopieren mit sudo
+        echo "  Kopiere App (sudo)..."
+        if sudo cp -r dist/SyNasPy.app /Applications/ 2>/dev/null; then
+            echo "  ✅ App wurde nach /Applications kopiert"
+
+            # Berechtigungen setzen
+            sudo chown -R $(whoami):staff /Applications/SyNasPy.app 2>/dev/null || true
+            echo "  ✅ Berechtigungen gesetzt"
+
+            echo ""
+            echo "  🚀 App kann jetzt gestartet werden mit:"
+            echo "     open /Applications/SyNasPy.app"
+        else
+            echo "  ❌ Fehler beim Kopieren nach /Applications"
+            echo "  Versuche mit manuellem sudo (Passwort eingeben)..."
+            if sudo cp -r dist/SyNasPy.app /Applications/; then
+                echo "  ✅ App wurde nach /Applications kopiert"
+                sudo chown -R $(whoami):staff /Applications/SyNasPy.app 2>/dev/null || true
+            else
+                echo "  ❌ Kopieren fehlgeschlagen! Keine Berechtigung."
+                echo "  Kopieren Sie manuell:"
+                echo "     sudo cp -r dist/SyNasPy.app /Applications/"
+            fi
+        fi
+    else
+        echo "  ℹ App bleibt in dist/SyNasPy.app"
+    fi
+
+else
+    echo "  ❌ BUILD FEHLGESCHLAGEN!"
+    exit 1
+fi
+
+echo ""
+echo "╔════════════════════════════════════════════╗"
+echo "║  ✅ Build erfolgreich abgeschlossen!      ║"
+echo "║  📦 App: dist/SyNasPy.app                ║"
+echo "║  🏗 Architektur: $ARCH                    ║"
+echo "╚════════════════════════════════════════════╝"
+echo ""

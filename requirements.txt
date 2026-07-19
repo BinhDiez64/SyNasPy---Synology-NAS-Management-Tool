@@ -1,0 +1,79 @@
+# requirements
+
+PyQt5>=5.15.0
+pyinstaller>=6.0.0
+
+
+Optional packages for development:
+
+```
+pytest>=7.0.0
+pytest-qt>=4.0.0
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.0.0
+```
+
+📦 Installation
+
+Production (minimal)
+
+```bash
+pip install -r requirements.txt
+```
+
+Development (full)
+
+```bash
+pip install -r requirements-dev.txt
+```
+
+🔍 Explanation of Dependencies
+
+Package Version Purpose
+PyQt5 >=5.15.0 GUI framework - required for the application
+pyinstaller >=6.0.0 Creates standalone macOS app (optional)
+
+Why These Dependencies?
+
+· PyQt5: The application uses Qt5 for the graphical interface. Version 5.15 ensures compatibility with all modern macOS versions.
+· pyinstaller: Used to build the app as a standalone macOS application bundle. Not required for running from source.
+
+📝 Notes
+
+· All other dependencies are from Python's standard library (no additional packages needed)
+· The app runs on Python 3.9+ without external dependencies beyond PyQt5
+· For development, you can use pip install -e . if you create a setup.py file
+
+🏗️ Building the App
+
+With pyinstaller installed:
+
+```bash
+pyinstaller --windowed --name "SyNasPy" --icon SyNasPy.icns SyNasPy.py
+```
+
+Or use the spec file:
+
+```bash
+pyinstaller SyNasPy.spec
+```
+
+🔧 Troubleshooting
+
+If you encounter issues:
+
+```bash
+# Upgrade pip
+python -m pip install --upgrade pip
+
+# Install with verbose output
+pip install -v -r requirements.txt
+
+# On macOS, you might need:
+brew install pyqt5
+```
+
+---
+
+Note: This is a minimal requirements file. The application is designed to work with Python's standard library plus PyQt5 for the GUI.
