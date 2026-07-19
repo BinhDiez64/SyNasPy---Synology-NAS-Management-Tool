@@ -2,7 +2,8 @@
 
 A powerful macOS GUI application for managing Synology NAS servers with Wake-on-LAN, shutdown, and volume management capabilities.
 
-screenshot.png
+<img width="514" height="562" alt="server_offline" src="https://github.com/user-attachments/assets/1e5c0d36-5e32-49d1-9e5b-a6b62f7e4e12" /><img width="514" height="565" alt="server_online" src="https://github.com/user-attachments/assets/353732b1-2485-42a6-87eb-a75c067a6215" />
+
 
 ✨ Features
 
