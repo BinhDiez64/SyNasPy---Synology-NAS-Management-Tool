@@ -1,4 +1,4 @@
-# SyNasPy---Synology-NAS-Management-Tool
+# SyNasPy -- Synology-NAS-Management-Tool
 
 A powerful macOS GUI application for managing Synology NAS servers with Wake-on-LAN, shutdown, and volume management capabilities.
 
