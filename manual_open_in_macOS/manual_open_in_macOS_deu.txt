@@ -1,4 +1,4 @@
-PDFDarkView Öffnen / verwenden
+SyNasPy Öffnen / verwenden
 
 Wenn die Gatekeeper Warnung in macOS kommt, dass die App nicht von Apple notarisiert wurde oder die Notarisierung nicht überprüft werden konnte. Wenn du der Quelle der App vertraust, kannst du sie trotzdem öffnen.
 
@@ -10,11 +10,11 @@ Du kannst die App dennoch öffnen.
 
 Methode 1: Über die Systemeinstellungen (empfohlen)
 
-1. Versuche, PDFDarkView.app einmal zu öffnen.
+1. Versuche, SyNasPy.app einmal zu öffnen.
 2. Die Warnung erscheint – klicke auf fertig oder Abbrechen. (Nicht in den Papierkorb legen)
 3. Öffne Systemeinstellungen → Datenschutz & Sicherheit.
 4. Scrolle nach unten. Dort sollte eine Meldung erscheinen wie:
-    „PDFDarkView.app wurde blockiert …“
+    „SyNasPy.app wurde blockiert …“
 6. Bestätige den Dialog mit Öffnen.
 
 Methode 2: Rechtsklick
@@ -33,11 +33,11 @@ xattr -d com.apple.quarantine /Pfad/zu/PDFDarkView.app
 
 Oder, wenn die App z. B. im Programme-Ordner liegt:
 
-xattr -d com.apple.quarantine "/Applications/PDFDarkView.app"
+xattr -d com.apple.quarantine "/Applications/SyNasPy.app"
 
 Falls die App in deinem Downloads-Ordner liegt:
 
-xattr -d com.apple.quarantine "$HOME/Downloads/PDFDarkView.app"
+xattr -d com.apple.quarantine "$HOME/Downloads/SyNasPy.app"
 
 Anschließend die App erneut starten.
 
