@@ -87,6 +87,12 @@ SyNasPy currently supports **17 languages**.
 | Swedish | Turkish |
 | Vietnamese | |
 
+- Arabic (العربية)
+- Czech (Čeština)
+- German (Deutsch)
+- Greek (Ελληνικά)
+- Russian (Русский)
+
 ---
 
 ## 🎨 User Experience
