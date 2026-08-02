@@ -1,5 +1,214 @@
 # SyNasPy -- Synology-NAS-Management-Tool
 
+# SyNasPy
+
+**A modern macOS application for managing Synology NAS servers.**
+
+Wake up your NAS, shut it down safely, mount SMB volumes, manage multiple servers, and automate common tasks — all from a clean and intuitive macOS interface.
+
+---
+
+## 📸 Screenshots
+
+| Main Window | Settings |
+|-------------|----------|
+| <img width="420" alt="Server Offline" src="https://github.com/user-attachments/assets/2598c7c9-7256-4ea4-94f7-800d95f60989"> | <img width="420" alt="Settings" src="https://github.com/user-attachments/assets/514809e4-b9a4-48c7-bb67-4d7039fc147c"> |
+
+---
+
+# ✨ Features
+
+## 🚀 NAS Management
+
+- Wake-on-LAN (WOL) support
+- Safe NAS shutdown
+- Optional Mac shutdown after NAS shutdown
+- Automatic startup and shutdown timers
+- Configurable countdown delays
+- Pause and resume active timers
+
+---
+
+## 💾 Volume Management
+
+- Mount SMB network volumes
+- Unmount selected volumes
+- Individual volume selection
+- Automatic volume handling after NAS startup
+
+---
+
+## 🖥️ Multi-Server Support
+
+- Unlimited server profiles
+- Fast profile switching
+- Create new profiles
+- Duplicate existing profiles
+- Rename profiles
+- Delete profiles
+- Set default profile
+
+---
+
+## 🔐 Security
+
+- SSH key authentication
+- No passwords stored
+- Secure SSH communication
+- Optional SSH key generation assistant
+- Open the local `.ssh` directory directly from the application
+
+---
+
+## 🌐 Network Features
+
+- Automatic IP detection
+- Bonjour / mDNS discovery
+- DNS lookup
+- ARP lookup
+- Network scanning fallback
+- Manual IP configuration
+
+---
+
+## 🌍 Languages
+
+SyNasPy currently supports **17 languages**.
+
+- العربية
+- Čeština
+- Deutsch
+- English
+- Español
+- Français
+- Ελληνικά
+- Italiano
+- Nederlands
+- Norsk
+- Polski
+- Português
+- Русский
+- Suomi
+- Svenska
+- Türkçe
+- Tiếng Việt
+
+---
+
+## 🎨 User Experience
+
+- Native macOS interface
+- Modern dark appearance
+- Voice feedback (macOS)
+- Progress indicator with percentage
+- Keyboard shortcuts
+- Automatic update checker
+- Background update notifications
+- Responsive user interface
+
+---
+
+# ⌨️ Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| ⌘ E | Open Settings |
+| Enter | Confirm |
+| Esc | Cancel |
+
+---
+
+# ⚙️ Requirements
+
+- macOS
+- Synology NAS
+- SSH enabled on the NAS
+- SMB file sharing enabled (for volume management)
+- Wake-on-LAN enabled (recommended)
+
+---
+
+# 🔒 Privacy & Security
+
+SyNasPy communicates directly with your Synology NAS.
+
+The application:
+
+- never stores your passwords
+- uses SSH key authentication
+- keeps private SSH keys on your Mac
+- does not require cloud services
+- performs all communication locally between your Mac and NAS
+
+---
+
+# 🚀 Typical Workflow
+
+1. Launch SyNasPy.
+2. Select your NAS profile.
+3. Wake your NAS using Wake-on-LAN.
+4. Wait until the NAS becomes available.
+5. Automatically mount selected SMB volumes.
+6. Work as usual.
+7. Shut down the NAS safely when finished.
+8. Optionally shut down your Mac afterwards.
+
+---
+
+# ⭐ Highlights
+
+- Designed specifically for Synology NAS
+- Native macOS experience
+- Multiple NAS profiles
+- Intelligent network detection
+- SSH key authentication
+- Automatic volume management
+- Timer automation
+- 17 interface languages
+- No subscription
+- No telemetry
+- No cloud dependency
+
+---
+
+# 📦 Installation
+
+1. Download the latest release.
+2. Move **SyNasPy.app** to the **Applications** folder.
+3. Launch the application.
+4. Configure your NAS profile.
+5. Enjoy.
+
+---
+
+# 🛠️ Built With
+
+- Swift
+- SwiftUI
+- Apple Network Framework
+- SSH
+- Bonjour / mDNS
+- SMB
+
+---
+
+# 🤝 Contributing
+
+Contributions, bug reports, feature requests, and pull requests are welcome.
+
+If you find a bug or have an idea for improving SyNasPy, please open an issue.
+
+---
+
+# 📄 License
+
+This project is licensed under the MIT License.
+
+---
+
+**SyNasPy makes managing your Synology NAS on macOS simple, secure, and efficient.**
+
+###########################
 
 SyNasPy is a powerful macOS GUI application for managing Synology NAS servers with Wake‑on‑LAN, shutdown, volume management, and full multi‑server support.
 
