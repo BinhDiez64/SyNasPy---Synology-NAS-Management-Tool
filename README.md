@@ -74,23 +74,19 @@ Wake up your NAS, shut it down safely, mount SMB volumes, manage multiple server
 SyNasPy currently supports **17 languages**.
 
 - العربية
-- Čeština
-- Deutsch
-- English
-- Español
-- Français
-- Ελληνικά
-- Italiano
-- Nederlands
-- Norsk
-- Polski
-- Português
-- Русский
-- Suomi
-- Svenska
-- Türkçe
-- Tiếng Việt
-- Manual IP configuration
+## 🌍 Languages
+
+| | |
+|---|---|
+| Arabic | Greek |
+| Czech | Italian |
+| Dutch | Norwegian |
+| English | Polish |
+| Finnish | Portuguese |
+| French | Russian |
+| German | Spanish |
+| Swedish | Turkish |
+| Vietnamese | |
 
 ---
 
