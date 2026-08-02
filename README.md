@@ -1,46 +1,51 @@
 # SyNasPy -- Synology-NAS-Management-Tool
 
-A powerful macOS GUI application for managing Synology NAS servers with Wake-on-LAN, shutdown, and volume management capabilities.
 
-<img width="514" height="562" alt="server_offline" src="https://github.com/user-attachments/assets/1e5c0d36-5e32-49d1-9e5b-a6b62f7e4e12" /><img width="514" height="565" alt="server_online" src="https://github.com/user-attachments/assets/353732b1-2485-42a6-87eb-a75c067a6215" />
+SyNasPy is a powerful macOS GUI application for managing Synology NAS servers with Wake‑on‑LAN, shutdown, volume management, and full multi‑server support.
 
+---
 
 ✨ Features
 
 🚀 Core Functionality
 
-· Wake-on-LAN (WOL): Start your NAS remotely with a single click
-· Smart Shutdown: Gracefully shut down NAS and/or Mac with configurable delays
-· Auto-Start/Shutdown: Automatic actions with configurable timeouts
-· Volume Management: Mount/unmount network volumes with ease
-· SSH Integration: Secure NAS communication using SSH keys
+· Wake‑on‑LAN (WOL): Start your NAS remotely with one click.
+· Smart Shutdown: Gracefully shut down NAS and/or Mac with configurable delays.
+· Auto‑Start / Auto‑Shutdown: Automatic actions with individual timeouts.
+· Volume Management: Mount / unmount selected SMB volumes via checkboxes.
+· SSH Integration: Secure communication using SSH keys (no passwords stored).
 
-🎯 Advanced Features
+🎯 Multi‑Server & Advanced
 
-· Volume Selection: Choose specific volumes to mount/unmount
-· Smart Auto-Detection: Automatically finds NAS IP and MAC addresses
-· Multi-Protocol Support: Uses mDNS/Bonjour, DNS, ARP, and network scanning
-· Configurable Timeouts: Customize all waiting periods and retry counts
-· Status File System: Creates status files for workflow automation
-· Logging System: Comprehensive logging with rotation (max 5 files)
+· Multiple Server Profiles: Manage any number of Synology NAS devices.
+· Quick Profile Switching: Drop‑down menu in the main window.
+· Profile Management: Create, duplicate, rename, delete, and activate profiles.
+· 17 Languages: Full UI translation (Deutsch, English, Español, Français, Ελληνικά, Italiano, Nederlands, Norsk, Polski, Português, Русский, Suomi, Svenska, Türkçe, Tiếng Việt, Čeština, العربية).
+· Automatic IP Detection: Find NAS via Bonjour/mDNS, DNS, ARP, or network scan.
+· SSH Key Assistant: Open .ssh folder, create a new key pair (does not overwrite id_rsa) with optional passphrase.
+· Update Checker: Integrated manual and background update notifications.
 
 🎨 User Interface
 
-· Modern Dark Theme: Easy on the eyes with a professional look
-· Keyboard Shortcuts: Cmd+E for settings, ESC to cancel
-· Voice Feedback: Audio confirmation of actions (macOS only)
-· Progress Indication: Visual feedback for all operations
-· Quick Actions: One-click operations for common tasks
+· Modern Dark Theme: Easy on the eyes with a professional look.
+· Keyboard Shortcuts: Cmd+E for settings, ESC to cancel, Enter to confirm.
+· Voice Feedback: Audio confirmation of actions (macOS only).
+· Progress Indication: Visual feedback with progress bar and percentage.
+· Timer Pause: Pause / resume auto‑countdown with a single button.
+
+---
 
 📋 Requirements
 
-· Operating System: macOS 10.15 (Catalina) or later
-· Python: 3.9 or higher
-· Dependencies: PyQt5, Python standard libraries
-· NAS: Synology NAS with:
-  · SSH access enabled
-  · SMB file sharing
-  · Wake-on-LAN capability
+· Operating System: macOS 10.15 (Catalina) or later (Intel / Apple Silicon).
+· Python: 3.9 or higher.
+· Dependencies: PyQt5 (see requirements.txt).
+· Synology NAS with:
+  · SSH access enabled (for shutdown)
+  · SMB file sharing (for volume mounting)
+  · Wake‑on‑LAN capability
+
+---
 
 🔧 Installation
 
@@ -58,7 +63,7 @@ pip install -r requirements.txt
 python SyNasPy.py
 ```
 
-Build as macOS App
+Build as macOS App (optional)
 
 ```bash
 # Install PyInstaller
@@ -70,133 +75,136 @@ pyinstaller --windowed --name "SyNasPy" --icon SyNasPy.icns SyNasPy.py
 # The app will be in the dist/ folder
 ```
 
-Requirements.txt
+requirements.txt
 
-```txt
-PyQt5>=5.15.0
-pyinstaller>=5.0.0  # Optional, for building
 ```
+PyQt5>=5.15.0
+requests>=2.28.0      # for update checking
+packaging>=21.0       # for version comparison
+```
+
+---
 
 🚀 Quick Start
 
-1. First Launch: The app will create default configuration
-2. Configure NAS: Click the gear icon (⚙) or press Cmd+E
-3. Enter NAS Details:
-   · Username, DNS/IP, MAC address
-   · SSH key path (default: ~/.ssh/id_rsa)
-   · Volume list (one per line)
-4. Save Settings: Click "Save" to store configuration
+1. First Launch: The app creates default configuration and a default profile.
+2. Open Settings: Click the gear icon (⚙) or press Cmd+E.
+3. Configure a Profile:
+   · Enter NAS username, DNS/IP, MAC address.
+   · Set SSH key path (or create a new key with the 🔑 Erstellen button).
+   · Define your SMB volumes (one per line; the first volume becomes the main volume and cannot be disabled).
+   · Adjust timing values as needed.
+4. Save: Click Save – your profile is stored.
 5. Main Window:
-   · "Mac & NAS": Shut down both
-   · "NAS": Shut down only the NAS
-   · "Start NAS": Wake the NAS
-   · "Cancel": Close the app
+   · Mac & NAS: Shut down both devices (with configurable delay between them).
+   · NAS: Shut down only the NAS.
+   · Start NAS: Wake the NAS via WOL.
+   · Cancel: Close the app.
+
+---
 
 ⚙️ Configuration
 
-Settings Dialog
+Settings Dialog Tabs
 
-Section Settings Description
-NAS Server Username SSH/SMB username for NAS
- DNS Name Bonjour/DNS name (e.g., NAS-Synology.local)
- IP Address Static IP of your NAS
- MAC Address Network hardware address
- SSH Key Path Path to private SSH key
-Volumes Volume List List of network volumes to manage
-Timing Auto-Shutdown Delay Time before automatic shutdown (10-600s)
- Auto-Start Delay Time before automatic start (10-600s)
- WOL Wait Time Maximum WOL wait time (30-600s)
- SMB Wait Time Wait time for SMB service (5-120s)
- Mount Retries Number of mount attempts (1-10)
-Status Status File Path Path to status file for workflow automation
+Tab Content
+General Language selection, NAS credentials, SSH key path (with folder open and key creation buttons).
+Volumes List of SMB volumes (one per line). The first volume is the main volume and cannot be unchecked.
+Timing Auto‑shutdown delay, auto‑start delay, WOL wait, SMB wait, mount retries, and delay between NAS‑ and Mac‑shutdown (0–30 seconds).
+Server Profiles Manage all profiles: create, duplicate, rename, delete, and set the active profile.
 
 Configuration Files
 
-· JSON: ~/Library/Application Support/SyNasPy/synaspy_config.json
-· QSettings: Platform-specific settings (overrides JSON)
+All settings are stored in ~/.SyNasPy/:
+
+· synaspy_config.json – global settings (language, logo, etc.).
+· server_profiles.json – all server profiles (including the active profile ID).
 
 Log Files
 
-Logs are stored in ~/Library/Application Support/SyNasPy/Logs/ with automatic rotation (max 5 files).
+Logs are written to ~/Library/Application Support/SyNasPy/Logs/ with automatic rotation (max 5 files).
+
+---
 
 ⌨️ Keyboard Shortcuts
 
 Shortcut Action
 Cmd+E Open Settings Dialog
-ESC Cancel operation / Close app
-Enter Trigger focused button
+ESC Cancel current operation / close app
+Enter Trigger the focused button
 Tab Navigate through controls
+
+---
 
 🔒 Security
 
-· SSH key authentication only (no password storage)
-· Keys stored in user's home directory
-· No sensitive data transmitted over network
-· All operations use macOS system APIs
+· Uses SSH key authentication only (no passwords stored).
+· Keys remain in the user’s home directory.
+· No sensitive data is transmitted over the network.
+· All operations use macOS system APIs.
+
+---
 
 🐛 Troubleshooting
 
 NAS Not Found
 
-· Issue: NAS not detected
-· Solution: Use the "Find IP" button in settings or enter IP manually
-· Check: Verify NAS is powered on and network connected
+· Use the 🔍 Find IP button in settings.
+· Verify the NAS is powered on and connected to the network.
 
 WOL Not Working
 
-· Issue: NAS doesn't wake up
-· Solution:
-  1. Verify MAC address in settings
-  2. Check if NAS supports WOL
-  3. Try different WOL methods (Python/etherwake)
-  4. Check network interface settings
+· Check the MAC address in settings.
+· Ensure the NAS supports WOL and it is enabled.
+· Try different WOL methods (the app tries Python‑based, wakeonlan, and etherwake).
 
 Volume Mount Fails
 
-· Issue: Network volumes won't mount
-· Solution:
-  1. Verify NAS is online
-  2. Check SMB service is running
-  3. Increase mount retries in settings
-  4. Verify volume names are correct
+· Confirm the NAS is online and SMB service is running.
+· Increase the Mount Retries value in settings.
+· Verify volume names are correct (case‑sensitive).
 
-SSH Connection Issues
+SSH Connection / Shutdown Issues
 
-· Issue: Can't connect via SSH
-· Solution:
-  1. Generate SSH key: ssh-keygen -t rsa -b 4096
-  2. Copy key to NAS: ssh-copy-id user@nas-ip
-  3. Test connection: ssh -i ~/.ssh/id_rsa user@nas-ip
+· If the app asks for a password or fails, run ssh-add ~/.ssh/id_rsa once (or use the 🔑 Erstellen button to create a dedicated key).
+· Make sure your SSH key is copied to the NAS (ssh‑copy‑id).
+· For sudo shutdown, ensure the user has NOPASSWD for /sbin/shutdown, /sbin/poweroff, and /usr/syno/bin/synopoweroff in /etc/sudoers.
+
+---
 
 🏗️ Architecture
 
+```
 SyNasPy/
-├── SyNasPy.py          # Main application
-├── requirements.txt    # Dependencies
-├── README.md          # This file
-├── LICENSE            # MIT License
-├── BinhDiez.png       # Application logo
-├── SyNasPy.png        # Application icon
-└── build/             # Build artifacts
-
+├── SyNasPy.py             # Main application
+├── requirements.txt       # Dependencies
+├── README.md              # This file
+├── LICENSE                # MIT License
+├── BinhDiez.png           # Application logo
+├── SyNasPy.png            # Application icon
+└── .gitignore
+```
 
 Key Components
 
-· AppLogger: Logging system with buffer and rotation
-· Config: Central configuration management
-· ConfigDialog: Settings interface
-· SyNasPy: Main application window
-· Utilities: SSH, WOL, volume management helpers
+· LanguageManager – Multi‑language support (11 languages).
+· ServerProfile / ServerProfileManager – Profile data and persistence.
+· Config – Central configuration (merges global and profile settings).
+· SyNasPy – Main window and core logic.
+· ConfigDialog – Settings interface (with profile management).
+· InfoDialog – About window with version, licenses, and update checker.
+· AppLogger – Logging with buffering and rotation.
+
+---
 
 🤝 Contributing
 
-Contributions are welcome! Please follow these steps:
+Contributions are welcome!
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+1. Fork the repository.
+2. Create a feature branch (git checkout -b feature/YourFeature).
+3. Make your changes and commit.
+4. Push to your fork and open a pull request.
 
 Development Setup
 
@@ -209,45 +217,58 @@ cd SyNasPy
 python -m venv venv
 source venv/bin/activate
 
-# Install development dependencies
+# Install dependencies
 pip install -r requirements.txt
-
-# Run tests (if available)
-python -m unittest discover tests/
 ```
 
-📝 License
+---
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+📄 License
+
+This project is licensed under the MIT License.
+Copyright (c) 2026 BinhDiez64.
+
+PyQt5 Notice: This application uses PyQt5, which is licensed under the GNU General Public License v3 (GPLv3).
+Copyright (c) Riverbank Computing Limited.
+Full license text: https://www.gnu.org/licenses/gpl-3.0.html
+
+---
 
 🙏 Acknowledgments
 
-· Synology - For their excellent NAS hardware and DSM
-· PyQt Team - For the amazing Qt bindings
-· macOS Community - For the helpful system integration tips
+· Synology – For their excellent NAS hardware and DSM.
+· PyQt Team – For the amazing Qt bindings.
+· macOS Community – For helpful system integration tips.
+
+---
 
 📞 Support
 
 · Issues: GitHub Issues
 · Discussions: GitHub Discussions
-· Wiki: Project Wiki
+
+---
 
 🔄 Changelog
 
-Version 1.0.0 (Current)
+Version 2.0.0 (Current)
 
-· Initial release
-· Core functionality (WOL, shutdown, volume management)
-· Settings dialog with all configurations
-· Logging system with rotation
-· macOS native integration
+· Multi‑Server Profiles: Manage any number of NAS devices.
+· 11 Languages: Full UI translation.
+· Profile Management: Create, duplicate, rename, delete, activate.
+· SSH Key Assistant: Open folder, create new key (does not overwrite id_rsa) with optional passphrase.
+· Configurable Shutdown Delay: Adjustable delay between NAS‑ and Mac‑shutdown (0‑30 s).
+· Update Checker: Integrated manual and background update notifications.
+· Improved Shutdown Logic: More reliable NAS shutdown with fallback methods.
+· Removed Obsolete Status File: The boQuitNASapp.txt workaround is no longer used.
+· Enhanced Progress Bar: Shows percentage outside the bar.
 
-Planned Features
+Version 1.0.0 (Legacy)
 
-· Multi-NAS support
-· Notification center integration
+· Single NAS management.
+· Basic WOL, shutdown, volume mounting.
+· Initial settings dialog.
+
 ---
 
-SyNasPy - Making Synology NAS management on macOS simple and elegant.
-
-Made with ❤️ for the NAS community
+Made with ❤️ for the NAS community.
