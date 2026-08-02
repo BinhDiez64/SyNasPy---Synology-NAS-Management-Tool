@@ -3,9 +3,8 @@
 
 SyNasPy is a powerful macOS GUI application for managing Synology NAS servers with Wake‑on‑LAN, shutdown, volume management, and full multi‑server support.
 
-<img width="696" height="789" alt="settings_tab_1" src="https://github.com/user-attachments/assets/514809e4-b9a4-48c7-bb67-4d7039fc147c" />
 <img width="522" height="653" alt="server_offline" src="https://github.com/user-attachments/assets/2598c7c9-7256-4ea4-94f7-800d95f60989" />
-
+<img width="696" height="789" alt="settings_tab_1" src="https://github.com/user-attachments/assets/514809e4-b9a4-48c7-bb67-4d7039fc147c" />
 ---
 
 ✨ Features
