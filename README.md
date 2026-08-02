@@ -72,10 +72,7 @@ Wake up your NAS, shut it down safely, mount SMB volumes, manage multiple server
 ## 🌍 Languages
 
 SyNasPy currently supports **17 languages**.
-
 - العربية
-## 🌍 Languages
-
 | | |
 |---|---|
 | Arabic | Greek |
@@ -176,7 +173,6 @@ The application:
 
 ---
 
-
 # ⚙️ Configuration
 
 Settings Dialog Tabs
@@ -197,12 +193,6 @@ All settings are stored in ~/Library/Application Support/SyNasPy/:
 Log Files
 
 Logs are written to ~/Library/Application Support/SyNasPy/Logs/ with automatic rotation (max 5 files).
-
----
-
-
-
-###########################
 
 ---
 
@@ -306,6 +296,7 @@ Full license text: https://www.gnu.org/licenses/gpl-3.0.html
 ---
 
 Made with ❤️ for the NAS community.
+
 **SyNasPy makes managing your Synology NAS on macOS simple, secure, and efficient.**
 ---
 
