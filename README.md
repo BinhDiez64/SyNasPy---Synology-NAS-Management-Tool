@@ -1,5 +1,3 @@
-# SyNasPy -- Synology-NAS-Management-Tool
-
 # SyNasPy
 
 **A modern macOS application for managing Synology NAS servers.**
@@ -92,6 +90,7 @@ SyNasPy currently supports **17 languages**.
 - Svenska
 - Türkçe
 - Tiếng Việt
+- Manual IP configuration
 
 ---
 
