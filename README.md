@@ -254,7 +254,7 @@ Full license text: https://www.gnu.org/licenses/gpl-3.0.html
 Version 2.0.0 (Current)
 
 · Multi‑Server Profiles: Manage any number of NAS devices.
-· 11 Languages: Full UI translation.
+· 17 Languages: Full UI translation.
 · Profile Management: Create, duplicate, rename, delete, activate.
 · SSH Key Assistant: Open folder, create new key (does not overwrite id_rsa) with optional passphrase.
 · Configurable Shutdown Delay: Adjustable delay between NAS‑ and Mac‑shutdown (0‑30 s).
