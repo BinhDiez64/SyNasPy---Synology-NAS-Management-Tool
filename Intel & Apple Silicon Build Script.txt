@@ -1,0 +1,194 @@
+
+
+# Terminal
+
+cd '/Users/macuser/myApps/SyNasPy'
+activate_py
+chmod +x build_synaspy.sh
+./build_synaspy.sh
+
+
+
+#!/bin/bash
+
+set -e
+
+echo "╔════════════════════════════════════════=====════╗"
+echo "║     SyNasPy Build Script v2.0.0 für Mac         ║"
+echo "║     (Apple Silicon (M1/M2/M3/M4..) = arm64 und  ║"
+echo "║     Intel = x86_64)                             ║"
+echo "╚═══════════════=====═════════════════════════════╝"
+echo ""
+
+VERSION="2.0.0"
+if [ -f "synaspy.py" ]; then
+    VERSION_LINE=$(grep -E "CURRENT_VERSION\s*=\s*[\"']([0-9.]+)[\"']" synaspy.py | head -1 | sed -E 's/.*CURRENT_VERSION\s*=\s*["'\'']([0-9.]+)["'\''].*/\1/')
+    [ -n "$VERSION_LINE" ] && VERSION="$VERSION_LINE"
+    echo "  ✓ Version: $VERSION"
+fi
+
+# Prüfe, ob das originale PNG existiert
+[ -f "SyNasPy.png" ] || { echo "  ✗ SyNasPy.png nicht gefunden!"; exit 1; }
+[ -f "BinhDiez.png" ] || { echo "  ✗ BinhDiez.png nicht gefunden!"; exit 1; }
+
+# 1. PNG für Icon erstellen (schwarzer Hintergrund, quadratisch, 1024x1024)
+echo "  Erstelle SyNasPy_icon.png (für App-Icon)..."
+pip3 install Pillow --quiet 2>/dev/null || pip3 install Pillow
+python3 << PYTHON_ICON
+from PIL import Image
+img = Image.open("SyNasPy.png").convert("RGBA")
+# Transparente Bereiche durch schwarzen Hintergrund ersetzen
+if img.getchannel("A").getextrema() != (255, 255):
+    bg = Image.new("RGBA", img.size, (0, 0, 0, 255))
+    bg.paste(img, (0, 0), img)
+    img = bg
+# Quadratisch zuschneiden
+size = min(img.size)
+img = img.crop(((img.width - size)//2, (img.height - size)//2, (img.width + size)//2, (img.height + size)//2))
+# Auf 1024x1024 skalieren (für ICNS)
+img = img.resize((1024, 1024), Image.LANCZOS)
+img.save("SyNasPy_icon.png")
+PYTHON_ICON
+echo "  ✓ SyNasPy_icon.png erstellt"
+
+# 2. ICNS aus SyNasPy_icon.png erstellen (für Bundle)
+echo "  Erstelle ICNS (für Bundle) aus SyNasPy_icon.png..."
+mkdir -p SyNasPy.iconset
+# Nur die 1024x1024 als @2x für 512
+cp SyNasPy_icon.png SyNasPy.iconset/icon_512x512@2x.png
+iconutil -c icns SyNasPy.iconset
+rm -rf SyNasPy.iconset
+[ -f "SyNasPy.icns" ] || { echo "  ✗ ICNS-Erstellung fehlgeschlagen!"; exit 1; }
+echo "  ✓ ICNS erstellt"
+
+# 3. Abhängigkeiten installieren
+pip3 install pyinstaller PyQt5 --quiet 2>/dev/null || pip3 install pyinstaller PyQt5
+python3 -c "import PyQt5" 2>/dev/null || { echo "  ✗ PyQt5 fehlt"; exit 1; }
+
+# 4. .spec Datei (NUR SyNasPy.png und BinhDiez.png als Daten)
+cat > SyNasPy.spec << EOF
+# -*- mode: python ; coding: utf-8 -*-
+import sys, os, platform
+block_cipher = None
+datas = [
+    ('BinhDiez.png', '.'),
+    ('SyNasPy.png', '.'),
+]
+arch = 'arm64' if platform.machine() == 'arm64' else 'x86_64'
+a = Analysis(
+    ['synaspy.py'],
+    pathex=[],
+    binaries=[],
+    datas=datas,
+    hiddenimports=[
+        'PyQt5.sip', 'PyQt5.QtCore', 'PyQt5.QtGui', 'PyQt5.QtWidgets',
+        'socket', 'subprocess', 'json', 'threading', 'time',
+        'os', 'sys', 'pathlib', 'struct', 'getpass', 'datetime',
+        'urllib.request', 'textwrap',
+    ],
+    hookspath=[],
+    hooksconfig={},
+    runtime_hooks=[],
+    excludes=[],
+    win_no_prefer_redirects=False,
+    win_private_assemblies=False,
+    cipher=block_cipher,
+    noarchive=False,
+)
+pyd = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
+exe = EXE(
+    pyd, a.scripts, a.binaries, a.zipfiles, a.datas, [],
+    name='SyNasPy',
+    debug=False,
+    bootloader_ignore_signals=False,
+    strip=False,
+    upx=True,
+    upx_exclude=[],
+    runtime_tmpdir=None,
+    console=False,
+    disable_windowed_traceback=False,
+    argv_emulation=False,
+    target_arch=arch,
+    codesign_identity=None,
+    entitlements_file=None,
+    icon='SyNasPy.icns' if os.path.exists('SyNasPy.icns') else None,
+)
+app = BUNDLE(
+    exe,
+    name='SyNasPy.app',
+    bundle_identifier='com.synaspy.app',
+    icon='SyNasPy.icns' if os.path.exists('SyNasPy.icns') else None,
+    info_plist={
+        'CFBundleName': 'SyNasPy',
+        'CFBundleDisplayName': 'SyNasPy',
+        'CFBundleShortVersionString': '$VERSION',
+        'CFBundleVersion': '$VERSION',
+        'NSHighResolutionCapable': True,
+        'NSRequiresAquaSystemAppearance': False,
+        'CFBundleIconFile': 'SyNasPy',
+        'CFBundleIconName': 'SyNasPy',
+    },
+)
+EOF
+
+echo "  ✓ .spec erstellt"
+rm -rf build/ dist/
+pyinstaller --clean SyNasPy.spec 2>&1 | tee build.log
+[ ${PIPESTATUS[0]} -ne 0 ] && { echo "  ❌ Build fehlgeschlagen!"; exit 1; }
+
+APP_PATH="dist/SyNasPy.app"
+cp SyNasPy.icns "$APP_PATH/Contents/Resources/SyNasPy.icns"
+/usr/libexec/PlistBuddy -c "Set :CFBundleIconFile SyNasPy" "$APP_PATH/Contents/Info.plist" 2>/dev/null || \
+/usr/libexec/PlistBuddy -c "Add :CFBundleIconFile string SyNasPy" "$APP_PATH/Contents/Info.plist"
+codesign --force --deep --sign - "$APP_PATH" 2>/dev/null || echo "  ⚠ Signierung übersprungen"
+
+# 5. Caches leeren
+echo "  🧹 Leere Caches..."
+sudo rm -rf /Library/Caches/com.apple.iconservices 2>/dev/null || true
+rm -rf ~/Library/Caches/com.apple.dock.iconcache* 2>/dev/null || true
+rm -rf ~/Library/Caches/com.apple.iconservices 2>/dev/null || true
+/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user 2>/dev/null || true
+killall Dock 2>/dev/null || true
+killall Finder 2>/dev/null || true
+echo "  ✅ Caches geleert"
+
+# 6. App kurz öffnen (zum Laden)
+echo "  Lade Icon durch kurzes Öffnen der App..."
+open "$APP_PATH" &
+sleep 3
+pkill -x SyNasPy 2>/dev/null || true
+
+# 7. Optional: Nach /Applications kopieren
+echo ""
+read -p "  App nach /Applications kopieren? (j/n) " COPY_APP
+if [[ "$COPY_APP" =~ ^[Jj]$ ]]; then
+    if [ -d "/Applications/SyNasPy.app" ]; then
+        read -p "  Überschreiben? (j/n) " OVERWRITE
+        [[ "$OVERWRITE" =~ ^[Jj]$ ]] && sudo rm -rf /Applications/SyNasPy.app || exit 0
+    fi
+    sudo cp -r "$APP_PATH" /Applications/
+    sudo cp SyNasPy.icns /Applications/SyNasPy.app/Contents/Resources/
+    sudo /usr/libexec/PlistBuddy -c "Set :CFBundleIconFile SyNasPy" /Applications/SyNasPy.app/Contents/Info.plist 2>/dev/null || \
+    sudo /usr/libexec/PlistBuddy -c "Add :CFBundleIconFile string SyNasPy" /Applications/SyNasPy.app/Contents/Info.plist
+    sudo codesign --force --deep --sign - /Applications/SyNasPy.app 2>/dev/null || true
+    /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f /Applications/SyNasPy.app 2>/dev/null || true
+    killall Dock 2>/dev/null || true
+    echo "  ✅ App nach /Applications kopiert"
+    APP_PATH="/Applications/SyNasPy.app"
+fi
+
+echo ""
+echo "╔════════════════════════════════════════════════════════════╗"
+echo "║  ✅ BUILD ERFOLGREICH!                                     ║"
+echo "║                                                            ║"
+echo "║  📦 App: $APP_PATH                                         ║"
+echo "║  🏗 Architektur: $(uname -m)                               ║"
+echo "║  📌 Version: $VERSION                                      ║"
+echo "║                                                            ║"
+echo "║  📦 OPTIONAL: MANUELLES SETZEN DES ICONS                   ║"
+echo "║                                                            ║"
+echo "║  1. Rechtsklick auf die App → Informationen                ║"
+echo "║  2. Ziehe SyNasPy_icon.png (im Projektordner)              ║"
+echo "║     auf das kleine Icon oben links in der Info-Box der App ║"
+echo "║  3. App ausführen und im Dock behalten                     ║"
+echo "╚════════════════════════════════════════════════════════════╝"
